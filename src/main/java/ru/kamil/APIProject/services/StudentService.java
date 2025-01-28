@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface StudentService {
     List<StudentDTO> getAllStudents();
-    StudentDTO getStudent(String email);
+    StudentDTO getStudentByEmail(String email) throws EntityNotFoundException;
     void saveStudent(StudentDTO student);
     void updateStudent(StudentDTO student) throws EntityNotFoundException;
     void deleteStudent(Long id);

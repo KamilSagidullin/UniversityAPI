@@ -3,4 +3,4 @@ create table students(
     name varchar(150) not null unique,
     email varchar unique,
     dateOfBirth date
-                     )
+                      )

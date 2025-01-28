@@ -9,6 +9,7 @@ import ru.kamil.APIProject.models.Student;
 import ru.kamil.APIProject.repositories.StudentRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,15 +25,15 @@ public class StudentServiceImpl implements StudentService {
     @Override
     public List<StudentDTO> getAllStudents() {
         return studentRepository.findAll().stream()
-                .map(student -> new StudentDTO( student.getName(), student.getEmail(), student.getDateOfBirth()))
+                .map(this::mapToDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public StudentDTO getStudent(String email) {
+    public StudentDTO getStudentByEmail(String email) throws EntityNotFoundException {
         return studentRepository.findByEmail(email)
-                .map(student -> new StudentDTO( student.getName(), student.getEmail(), student.getDateOfBirth()))
-                .orElse(null);
+                .map(this::mapToDTO)
+                .orElseThrow(() -> new EntityNotFoundException("Student not found with email: " + email));
     }
 
     @Override
@@ -45,13 +46,15 @@ public class StudentServiceImpl implements StudentService {
     @Transactional
     @Override
     public void updateStudent(StudentDTO studentDTO) {
-        Student student = studentRepository.findByEmail(studentDTO.getEmail())
+        Student student = studentRepository.findByName(studentDTO.getName())
                 .orElseThrow(() -> new EntityNotFoundException("Student not found"));
-        student.setName(studentDTO.getName());
-        student.setEmail(studentDTO.getEmail());
-        student.setDateOfBirth(studentDTO.getDateOfBirth());
+
+        Optional.ofNullable(studentDTO.getEmail()).ifPresent(student::setEmail);
+        Optional.ofNullable(studentDTO.getDateOfBirth()).ifPresent(student::setDateOfBirth);
+
         studentRepository.save(student);
     }
+
 
     @Override
     @Transactional

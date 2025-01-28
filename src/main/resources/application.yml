@@ -6,7 +6,7 @@ spring:
     url: jdbc:postgresql://localhost:5432/university_db
   jpa:
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     database: postgresql
     database-platform: org.hibernate.dialect.PostgreSQLDialect
     show-sql: true
